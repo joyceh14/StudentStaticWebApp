@@ -1,0 +1,122 @@
+﻿@page "/student-count"
+@inject HttpClient Http
+
+<PageTitle>Student Count</PageTitle>
+
+<h2>Student Count by School</h2>
+@if (schoolCounts == null)
+{
+    <p>Loading student counts...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>School</th>
+                <th>Student Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sc in schoolCounts)
+            {
+                <tr>
+                    <td>@sc.School</td>
+                    <td>@sc.Count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h2>Students by School</h2>
+<input type="text" @bind="selectedSchool" @bind:event="oninput" placeholder="Enter school name" @onkeydown="HandleKeyPress" />
+<button @onclick="LoadStudentsBySchool">Search</button>
+
+@if (filteredStudents == null)
+{
+    <p></p>
+} 
+else if (filteredStudents.Count == 0)
+{
+    <p>@errorMessage</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>School</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in filteredStudents)
+            {
+                <tr>
+                    <td>@s.FirstName @s.LastName</td>
+                    <td>@s.School</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Student>? filteredStudents;
+    private List<SchoolCount>? schoolCounts;
+    private string selectedSchool = "";
+    private string errorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        schoolCounts = await Http.GetFromJsonAsync<List<SchoolCount>>("students/count/count-by-school");
+    }
+
+    private async Task LoadStudentsBySchool()
+    {
+        errorMessage = "";
+
+        if (!string.IsNullOrWhiteSpace(selectedSchool))
+        {
+            string encodedSchool = Uri.EscapeDataString(selectedSchool);
+            var response = await Http.GetAsync($"students/school/{encodedSchool}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                filteredStudents = await response.Content.ReadFromJsonAsync<List<Student>>();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                filteredStudents = new List<Student>();
+                errorMessage = $"No students found for \"{selectedSchool}\".";
+            }
+            else
+            {
+                errorMessage = "An error occurred while fetching data.";
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") 
+        {
+            await LoadStudentsBySchool();
+        }
+    }
+
+    public class Student
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? School { get; set; }
+    }
+
+    public class SchoolCount
+    {
+        public string? School { get; set; }
+        public int Count { get; set; }
+    }
+}

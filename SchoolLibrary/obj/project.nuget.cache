@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "VV+c0XZbKEI=",
+  "success": true,
+  "projectFilePath": "/Users/joyce/Desktop/4870/Labs/Functions2025/SchoolLibrary/SchoolLibrary.csproj",
+  "expectedPackageFiles": [
+    "/Users/joyce/.nuget/packages/microsoft.netcore.app.ref/8.0.11/microsoft.netcore.app.ref.8.0.11.nupkg.sha512",
+    "/Users/joyce/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.11/microsoft.aspnetcore.app.ref.8.0.11.nupkg.sha512"
+  ],
+  "logs": []
+}
