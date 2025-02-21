@@ -16,23 +16,6 @@ public partial class SchoolContext : DbContext
     {
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            var connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
-
-            if (!string.IsNullOrEmpty(connectionString))
-            {
-                optionsBuilder.UseSqlServer(connectionString);
-            }
-            else
-            {
-                throw new InvalidOperationException("DATABASE_CONNECTION_STRING is not set.");
-            }
-        }
-    }
-
     public virtual DbSet<Student> Students { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
