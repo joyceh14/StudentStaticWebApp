@@ -70,7 +70,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        schoolCounts = await Http.GetFromJsonAsync<List<SchoolCount>>("students/count/count-by-school");
+        schoolCounts = await Http.GetFromJsonAsync<List<SchoolCount>>("api/students/count/count-by-school");
     }
 
     private async Task LoadStudentsBySchool()
@@ -80,7 +80,7 @@ else
         if (!string.IsNullOrWhiteSpace(selectedSchool))
         {
             string encodedSchool = Uri.EscapeDataString(selectedSchool);
-            var response = await Http.GetAsync($"students/school/{encodedSchool}");
+            var response = await Http.GetAsync($"api/students/school/{encodedSchool}");
 
             if (response.IsSuccessStatusCode)
             {
